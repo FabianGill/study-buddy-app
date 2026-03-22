@@ -1,0 +1,48 @@
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .header { background: #EBF0FB; padding: 40px; text-align: center; }
+      .header h1 { color: #1A2B4A; font-size: 32px; }
+      .header p { color: #555; margin-top: 8px; }
+      .grid { display: flex; flex-wrap: wrap; gap: 20px; padding: 40px; justify-content: center; }
+      .card { background: white; border-radius: 10px; width: 280px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+      .card-top { padding: 15px 20px; color: white; font-weight: bold; font-size: 13px; }
+      .offering-top { background: #2D5BE3; }
+      .seeking-top { background: #F4A300; color: #1A2B4A; }
+      .card-body { padding: 20px; }
+      .card-body h3 { color: #1A2B4A; margin-bottom: 8px; }
+      .card-body p { color: #666; font-size: 13px; margin-bottom: 5px; }
+      .tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+      .tag { background: #EBF0FB; color: #2D5BE3; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+      .card-footer { padding: 15px 20px; border-top: 1px solid #eee; }
+      .btn { background: #2D5BE3; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+    .header
+      h1 Browse Study Listings
+      p #{listings.length} listings available
+    .grid
+      each listing in listings
+        .card
+          .card-top(class=listing.listing_type + "-top")= listing.listing_type.toUpperCase()
+          .card-body
+            h3= listing.title
+            p 👤 #{listing.user_name}
+            p= listing.description
+            if listing.tags
+              .tags
+                each tag in listing.tags.split(",")
+                  span.tag= tag
+          .card-footer
+            a.btn(href="/listings/" + listing.listing_id) View Details

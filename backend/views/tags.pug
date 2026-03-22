@@ -1,0 +1,41 @@
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .header { background: #EBF0FB; padding: 40px; text-align: center; }
+      .header h1 { color: #1A2B4A; font-size: 32px; }
+      .header p { color: #555; margin-top: 8px; }
+      .content { padding: 40px; max-width: 1000px; margin: 0 auto; }
+      .category { margin-bottom: 40px; }
+      .category h2 { color: #1A2B4A; font-size: 20px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #EBF0FB; }
+      .tags { display: flex; flex-wrap: wrap; gap: 12px; }
+      .tag { background: white; border-radius: 8px; padding: 15px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-decoration: none; display: flex; flex-direction: column; align-items: center; min-width: 140px; }
+      .tag:hover { background: #EBF0FB; }
+      .tag-name { color: #1A2B4A; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+      .tag-count { color: #2D5BE3; font-size: 12px; }
+      .empty { color: #999; font-size: 13px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+    .header
+      h1 Browse by Subject
+      p Find study buddies in your area of study
+    .content
+      - const categories = [...new Set(tags.map(t => t.category))]
+      each category in categories
+        .category
+          h2= category
+          .tags
+            each tag in tags.filter(t => t.category === category)
+              a.tag(href="/listings?tag=" + tag.tag_name)
+                span.tag-name= tag.tag_name
+                span.tag-count #{tag.listing_count} listings

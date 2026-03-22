@@ -1,0 +1,45 @@
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .hero { background: #1A2B4A; color: white; padding: 40px; display: flex; align-items: center; gap: 30px; }
+      .avatar { width: 80px; height: 80px; border-radius: 50%; background: #2D5BE3; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; }
+      .hero h1 { font-size: 28px; margin-bottom: 8px; }
+      .hero p { opacity: 0.8; font-size: 14px; }
+      .content { padding: 40px; max-width: 900px; margin: 0 auto; }
+      .bio { background: white; border-radius: 10px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      .bio h2 { color: #1A2B4A; margin-bottom: 15px; }
+      .bio p { color: #555; line-height: 1.6; }
+      .listings h2 { color: #1A2B4A; margin-bottom: 15px; }
+      .listing-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+      .listing-card h3 { color: #1A2B4A; margin-bottom: 5px; }
+      .listing-card p { color: #666; font-size: 13px; }
+      .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+      .offering { background: #2D5BE3; color: white; }
+      .seeking { background: #F4A300; color: #1A2B4A; }
+      .btn { background: #2D5BE3; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; }
+      .back { display: inline-block; margin-bottom: 20px; color: #2D5BE3; text-decoration: none; font-size: 14px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+    .hero
+      .avatar= user.avatar_initials
+      div
+        h1= user.name
+        p Year #{user.year_of_study} · Joined #{user.created_at.toDateString()}
+    .content
+      a.back(href="/users") ← Back to Users
+      .bio
+        h2 About Me
+        p= user.bio
+      .listings
+        h2 Study Listings

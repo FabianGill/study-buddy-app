@@ -1,4 +1,47 @@
-doctype html
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .hero { background: #2D5BE3; color: white; text-align: center; padding: 80px 20px; }
+      .hero h1 { font-size: 42px; margin-bottom: 15px; }
+      .hero p { font-size: 18px; margin-bottom: 30px; opacity: 0.9; }
+      .btn { background: #F4A300; color: #1A2B4A; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; margin: 5px; display: inline-block; }
+      .btn-outline { background: transparent; color: white; border: 2px solid white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; margin: 5px; display: inline-block; }
+      .cards { display: flex; justify-content: center; gap: 20px; padding: 50px 30px; flex-wrap: wrap; }
+      .card { background: white; border-radius: 10px; padding: 30px; width: 250px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      .card h3 { color: #1A2B4A; margin-bottom: 10px; }
+      .card p { color: #666; font-size: 14px; }
+      .icon { font-size: 40px; margin-bottom: 15px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+    .hero
+      h1 Find Your Perfect Study Buddy
+      p Connect with peers, share knowledge, build community
+      a.btn(href="/listings") Browse Listings
+      a.btn-outline(href="/users") Find a Buddy
+    .cards
+      .card
+        .icon 🤝
+        h3 Connect
+        p Find peers who share your subjects and goals
+      .card
+        .icon 📚
+        h3 Learn Together
+        p Offer help or seek support in any subject
+      .card
+        .icon 🌟
+        h3 Build Community
+        p Rate sessions and grow your academic networkoctype html
 html
   head
     title= title
