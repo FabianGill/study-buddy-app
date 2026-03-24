@@ -3,9 +3,9 @@ USE studybuddy_db;
 
 CREATE TABLE IF NOT EXISTS users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL UNIQUE,
+  password_hash VARCHAR(50) NOT NULL,
   year_of_study INT,
   bio TEXT,
   avatar_initials VARCHAR(3),
