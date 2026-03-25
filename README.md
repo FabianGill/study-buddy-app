@@ -62,4 +62,4 @@ study-buddy-app/
 - Fabian Gill  A00017906
 - Ramesh Bist
 - Ahmed Hassan
-- Shishir Gotame
+- Shishir Gotame A00029921
