@@ -1,0 +1,57 @@
+doctype html
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .nav-user { color: #F4A300; font-weight: bold; margin-left: 20px; font-size: 14px; }
+      .btn-logout { background: #F4A300; color: #1A2B4A; padding: 6px 14px; border-radius: 5px; font-weight: bold; margin-left: 15px; font-size: 13px; }
+      .header { background: #1A2B4A; color: white; padding: 40px; text-align: center; }
+      .header h1 { font-size: 32px; margin-bottom: 10px; }
+      .header p { opacity: 0.8; font-size: 15px; }
+      .grid { display: flex; flex-wrap: wrap; gap: 20px; padding: 40px; justify-content: center; }
+      .card { background: white; border-radius: 10px; padding: 25px; width: 260px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; }
+      .match-badge { position: absolute; top: 15px; right: 15px; background: #F4A300; color: #1A2B4A; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+      .avatar { width: 60px; height: 60px; border-radius: 50%; background: #2D5BE3; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+      .card h3 { color: #1A2B4A; margin-bottom: 5px; }
+      .card p { color: #666; font-size: 13px; margin-bottom: 15px; }
+      .year { color: #888; font-size: 12px; margin-bottom: 10px; }
+      .btn { background: #2D5BE3; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; }
+      .empty { text-align: center; padding: 60px; color: #666; }
+      .empty h2 { color: #1A2B4A; margin-bottom: 10px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+        a(href="/match") My Matches
+        if user
+          span.nav-user Hi, #{user.name.split(' ')[0]}!
+          a.btn-logout(href="/logout") Logout
+        else
+          a(href="/login") Login
+          a(href="/register") Register
+    .header
+      h1 Your Study Buddy Matches
+      p Based on your subjects and listings we found these matches for you
+    .grid
+      if matches.length === 0
+        .empty
+          h2 No matches found yet
+          p Add more listings with subject tags to get matched!
+          a.btn(href="/listings") Browse Listings
+      else
+        each match in matches
+          .card
+            span.match-badge #{match.matching_tags} match
+            .avatar= match.avatar_initials
+            h3= match.name
+            p.year Year #{match.year_of_study}
+            p= match.bio
+            a.btn(href="/users/" + match.user_id) View Profile

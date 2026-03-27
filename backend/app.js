@@ -157,4 +157,31 @@ app.get("/tags", (req, res) => {
   );
 });
 
+
+// MATCHING ALGORITHM
+app.get("/match", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  const userId = req.session.user.user_id;
+  db.query(
+    `SELECT DISTINCT u.*, 
+     COUNT(DISTINCT lt2.tag_id) as matching_tags
+     FROM users u
+     JOIN listings l ON u.user_id = l.user_id
+     JOIN listing_tags lt ON l.listing_id = lt.listing_id
+     JOIN listing_tags lt2 ON lt.tag_id = lt2.tag_id
+     JOIN listings l2 ON lt2.listing_id = l2.listing_id
+     WHERE l2.user_id = ? 
+     AND u.user_id != ?
+     AND l.status = 'active'
+     GROUP BY u.user_id
+     ORDER BY matching_tags DESC
+     LIMIT 6`,
+    [userId, userId],
+    (err, matches) => {
+      if (err) throw err;
+      res.render("match", { title: "Your Matches", matches });
+    }
+  );
+});
+
 app.listen(3000, () => console.log("Running on http://localhost:3000"));
