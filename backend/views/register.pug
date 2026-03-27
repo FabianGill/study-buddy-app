@@ -1,0 +1,57 @@
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .container { max-width: 500px; margin: 60px auto; background: white; border-radius: 10px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      h1 { color: #1A2B4A; margin-bottom: 8px; font-size: 24px; }
+      p { color: #666; margin-bottom: 25px; font-size: 14px; }
+      .form-group { margin-bottom: 18px; }
+      label { display: block; color: #1A2B4A; font-size: 13px; font-weight: bold; margin-bottom: 6px; }
+      input, textarea, select { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+      input:focus, textarea:focus, select:focus { border-color: #2D5BE3; }
+      textarea { height: 80px; resize: vertical; }
+      .btn { width: 100%; background: #2D5BE3; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+      .btn:hover { background: #1A2B4A; }
+      .error { background: #ffeaea; color: #c0392b; padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 13px; }
+      .login-link { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+      .login-link a { color: #2D5BE3; text-decoration: none; font-weight: bold; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/login") Login
+        a(href="/register") Register
+    .container
+      h1 Create an Account
+      p Join StudyBuddy and connect with peers at your university
+      if error
+        .error= error
+      form(method="POST" action="/register")
+        .form-group
+          label Full Name
+          input(type="text" name="name" placeholder="e.g. Fabian Gill" required)
+        .form-group
+          label University Email
+          input(type="email" name="email" placeholder="e.g. fabian@roehampton.ac.uk" required)
+        .form-group
+          label Password
+          input(type="password" name="password" placeholder="At least 8 characters" required)
+        .form-group
+          label Year of Study
+          select(name="year_of_study" required)
+            option(value="") Select year...
+            option(value="1") Year 1
+            option(value="2") Year 2
+            option(value="3") Year 3
+            option(value="4") Year 4
+        .form-group
+          label About You
+          textarea(name="bio" placeholder="What subjects can you help with? What do you need help with?")
+        button.btn(type="submit") Create Account

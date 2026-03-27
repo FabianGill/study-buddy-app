@@ -1,3 +1,4 @@
+doctype html
 html
   head
     title= title
@@ -7,6 +8,7 @@ html
       nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
       nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
       nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .nav-user { color: #F4A300; font-weight: bold; margin-left: 20px; font-size: 14px; }
       .header { background: #EBF0FB; padding: 40px; text-align: center; }
       .header h1 { color: #1A2B4A; font-size: 32px; }
       .header p { color: #555; margin-top: 8px; }
@@ -29,6 +31,12 @@ html
         a(href="/users") Find Buddy
         a(href="/listings") Listings
         a(href="/tags") Subjects
+        if user
+          span.nav-user Hi, #{user.name.split(' ')[0]}!
+          a(href="/logout") Logout
+        else
+          a(href="/login") Login
+          a(href="/register") Register
     .header
       h1 Browse Study Listings
       p #{listings.length} listings available

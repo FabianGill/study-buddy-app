@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 const mysql = require("mysql2");
+const bcrypt = require("bcryptjs");
+const session = require("express-session");
 require("dotenv").config();
 
 const app = express();
@@ -8,24 +10,94 @@ const app = express();
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
 
-const db = mysql.createConnection({
+app.use(session({
+  secret: "studybuddy-secret-key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }
+}));
+
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error("Database connection failed:", err);
-  } else {
+db.getConnection((err, connection) => {
+  if (err) console.error("Database connection failed:", err);
+  else {
     console.log("Connected to MySQL database");
+    connection.release();
   }
+});
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
 });
 
 app.get("/", (req, res) => {
   res.render("index", { title: "Study Buddy" });
+});
+
+app.get("/register", (req, res) => {
+  res.render("register", { title: "Register" });
+});
+
+app.post("/register", async (req, res) => {
+  const { name, email, password, year_of_study, bio } = req.body;
+  const avatar_initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    db.query(
+      "INSERT INTO users (name, email, password_hash, year_of_study, bio, avatar_initials) VALUES (?, ?, ?, ?, ?, ?)",
+      [name, email, hash, year_of_study, bio, avatar_initials],
+      (err, result) => {
+        if (err) {
+          if (err.code === "ER_DUP_ENTRY") {
+            return res.render("register", { title: "Register", error: "Email already registered." });
+          }
+          throw err;
+        }
+        req.session.user = { user_id: result.insertId, name, email, avatar_initials };
+        res.redirect("/users");
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.render("register", { title: "Register", error: "Something went wrong." });
+  }
+});
+
+app.get("/login", (req, res) => {
+  res.render("login", { title: "Login" });
+});
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  db.query("SELECT * FROM users WHERE email = ?", [email], async (err, users) => {
+    if (err) throw err;
+    if (users.length === 0) {
+      return res.render("login", { title: "Login", error: "No account found with that email." });
+    }
+    const user = users[0];
+    const match = await bcrypt.compare(password, user.password_hash);
+    if (!match) {
+      return res.render("login", { title: "Login", error: "Incorrect password." });
+    }
+    req.session.user = { user_id: user.user_id, name: user.name, email: user.email, avatar_initials: user.avatar_initials };
+    res.redirect("/users");
+  });
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
 });
 
 app.get("/users", (req, res) => {
