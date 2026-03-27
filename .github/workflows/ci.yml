@@ -1,0 +1,51 @@
+name: Study Buddy CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Check app.js exists
+        run: |
+          if [ -f backend/app.js ]; then
+            echo "app.js found!"
+          else
+            echo "app.js missing!"
+            exit 1
+          fi
+
+      - name: Check all views exist
+        run: |
+          for view in index users profile listings listing-detail tags login register; do
+            if [ -f "backend/views/$view.pug" ]; then
+              echo "$view.pug found!"
+            else
+              echo "$view.pug missing!"
+              exit 1
+            fi
+          done
+
+      - name: Syntax check
+        run: |
+          cd backend
+          node --check app.js
+          echo "Syntax check passed!"
