@@ -118,7 +118,7 @@ app.get("/users/:id", (req, res) => {
       [userId],
       (err, listings) => {
         if (err) throw err;
-        res.render("profile", { title: user.name, user, listings });
+        res.render("profile", { title: user.name, profileUser: user, listings });
       }
     );
   });
@@ -232,6 +232,74 @@ app.post("/listings/:id/review", (req, res) => {
           res.redirect("/listings/" + listingId);
         }
       );
+    }
+  );
+});
+
+
+// MESSAGES - inbox
+app.get("/messages", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  const userId = req.session.user.user_id;
+  db.query(
+    `SELECT m.*, 
+     u1.name as sender_name, u1.avatar_initials as sender_avatar,
+     u2.name as receiver_name, u2.avatar_initials as receiver_avatar
+     FROM messages m
+     JOIN users u1 ON m.sender_id = u1.user_id
+     JOIN users u2 ON m.receiver_id = u2.user_id
+     WHERE m.receiver_id = ? OR m.sender_id = ?
+     ORDER BY m.created_at DESC`,
+    [userId, userId],
+    (err, messages) => {
+      if (err) throw err;
+      res.render("messages", { title: "Messages", messages });
+    }
+  );
+});
+
+// MESSAGES - conversation with a user
+app.get("/messages/:userId", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  const myId = req.session.user.user_id;
+  const otherId = req.params.userId;
+  db.query("SELECT * FROM users WHERE user_id = ?", [otherId], (err, users) => {
+    if (err) throw err;
+    if (users.length === 0) return res.status(404).send("User not found");
+    const otherUser = users[0];
+    db.query(
+      `SELECT m.*, u.name as sender_name, u.avatar_initials as sender_avatar
+       FROM messages m
+       JOIN users u ON m.sender_id = u.user_id
+       WHERE (m.sender_id = ? AND m.receiver_id = ?)
+       OR (m.sender_id = ? AND m.receiver_id = ?)
+       ORDER BY m.created_at ASC`,
+      [myId, otherId, otherId, myId],
+      (err, messages) => {
+        if (err) throw err;
+        db.query(
+          "UPDATE messages SET is_read = TRUE WHERE receiver_id = ? AND sender_id = ?",
+          [myId, otherId],
+          () => {}
+        );
+        res.render("conversation", { title: "Chat with " + otherUser.name, messages, otherUser });
+      }
+    );
+  });
+});
+
+// MESSAGES - send message
+app.post("/messages/:userId", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  const senderId = req.session.user.user_id;
+  const receiverId = req.params.userId;
+  const { content } = req.body;
+  db.query(
+    "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)",
+    [senderId, receiverId, content],
+    (err) => {
+      if (err) throw err;
+      res.redirect("/messages/" + receiverId);
     }
   );
 });

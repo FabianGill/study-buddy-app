@@ -1,0 +1,56 @@
+doctype html
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .nav-user { color: #F4A300; font-weight: bold; margin-left: 20px; font-size: 14px; }
+      .btn-logout { background: #F4A300; color: #1A2B4A; padding: 6px 14px; border-radius: 5px; font-weight: bold; margin-left: 15px; font-size: 13px; }
+      .header { background: #1A2B4A; color: white; padding: 40px; text-align: center; }
+      .header h1 { font-size: 32px; margin-bottom: 10px; }
+      .content { padding: 40px; max-width: 700px; margin: 0 auto; }
+      .message-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; text-decoration: none; }
+      .message-card:hover { background: #EBF0FB; }
+      .avatar { width: 50px; height: 50px; border-radius: 50%; background: #2D5BE3; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; flex-shrink: 0; }
+      .message-info h3 { color: #1A2B4A; margin-bottom: 4px; font-size: 15px; }
+      .message-info p { color: #666; font-size: 13px; }
+      .message-time { color: #888; font-size: 12px; margin-left: auto; }
+      .unread { border-left: 4px solid #2D5BE3; }
+      .empty { text-align: center; padding: 60px; color: #666; }
+      .empty h2 { color: #1A2B4A; margin-bottom: 10px; }
+      .btn { background: #2D5BE3; color: white; padding: 10px 25px; border-radius: 5px; text-decoration: none; font-size: 14px; display: inline-block; margin-top: 15px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+        a(href="/match") My Matches
+        a(href="/messages") Messages
+        if user
+          span.nav-user Hi, #{user.name.split(' ')[0]}!
+          a.btn-logout(href="/logout") Logout
+        else
+          a(href="/login") Login
+          a(href="/register") Register
+    .header
+      h1 Messages
+    .content
+      if messages.length === 0
+        .empty
+          h2 No messages yet
+          p Start a conversation with a study buddy!
+          a.btn(href="/users") Find a Buddy
+      else
+        each message in messages
+          a.message-card(href="/messages/" + (message.sender_id == user.user_id ? message.receiver_id : message.sender_id) class=(!message.is_read && message.receiver_id == user.user_id) ? "unread" : "")
+            .avatar= message.sender_id == user.user_id ? message.receiver_avatar : message.sender_avatar
+            .message-info
+              h3= message.sender_id == user.user_id ? message.receiver_name : message.sender_name
+              p= message.content.substring(0, 60) + (message.content.length > 60 ? "..." : "")
+            span.message-time= new Date(message.created_at).toLocaleDateString()

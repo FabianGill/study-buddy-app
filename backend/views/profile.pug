@@ -1,3 +1,4 @@
+doctype html
 html
   head
     title= title
@@ -5,8 +6,10 @@ html
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font-family: Arial, sans-serif; background: #f5f5f5; }
       nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; } .btn-logout { background: #F4A300; color: #1A2B4A; padding: 6px 14px; border-radius: 5px; font-weight: bold; margin-left: 15px; font-size: 13px; } .btn-logout { background: #F4A300; color: #1A2B4A; padding: 6px 14px; border-radius: 5px; font-weight: bold; margin-left: 15px; font-size: 13px; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
       nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .nav-user { color: #F4A300; font-weight: bold; margin-left: 20px; font-size: 14px; }
+      .btn-logout { background: #F4A300; color: #1A2B4A; padding: 6px 14px; border-radius: 5px; font-weight: bold; margin-left: 15px; font-size: 13px; }
       .hero { background: #1A2B4A; color: white; padding: 40px; display: flex; align-items: center; gap: 30px; }
       .avatar { width: 80px; height: 80px; border-radius: 50%; background: #2D5BE3; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; }
       .hero h1 { font-size: 28px; margin-bottom: 8px; }
@@ -22,7 +25,8 @@ html
       .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
       .offering { background: #2D5BE3; color: white; }
       .seeking { background: #F4A300; color: #1A2B4A; }
-      .btn { background: #2D5BE3; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; }
+      .btn { background: #2D5BE3; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; display: inline-block; }
+      .btn-msg { background: #F4A300; color: #1A2B4A; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; font-weight: bold; display: inline-block; margin-left: 10px; }
       .back { display: inline-block; margin-bottom: 20px; color: #2D5BE3; text-decoration: none; font-size: 14px; }
   body
     nav
@@ -31,15 +35,37 @@ html
         a(href="/users") Find Buddy
         a(href="/listings") Listings
         a(href="/tags") Subjects
+        a(href="/match") My Matches
+        a(href="/messages") Messages
+        if user
+          span.nav-user Hi, #{user.name.split(' ')[0]}!
+          a.btn-logout(href="/logout") Logout
+        else
+          a(href="/login") Login
+          a(href="/register") Register
     .hero
-      .avatar= user.avatar_initials
+      .avatar= profileUser.avatar_initials
       div
-        h1= user.name
-        p Year #{user.year_of_study} · Joined #{user.created_at.toDateString()}
+        h1= profileUser.name
+        p Year #{profileUser.year_of_study}
     .content
       a.back(href="/users") ← Back to Users
+      if user && user.user_id != profileUser.user_id
+        a.btn-msg(href="/messages/" + profileUser.user_id) 💬 Send Message
       .bio
         h2 About Me
-        p= user.bio
+        p= profileUser.bio
       .listings
         h2 Study Listings
+        if listings.length === 0
+          p No listings yet.
+        each listing in listings
+          .listing-card
+            div
+              h3= listing.title
+              p= listing.description
+            div
+              span.badge(class=listing.listing_type)= listing.listing_type
+              br
+              br
+              a.btn(href="/listings/" + listing.listing_id) View
