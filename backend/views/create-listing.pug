@@ -1,0 +1,65 @@
+doctype html
+html
+  head
+    title= title
+    style.
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background: #f5f5f5; }
+      nav { background: #1A2B4A; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+      nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
+      nav .logo { color: white; font-size: 20px; font-weight: bold; }
+      .nav-user { color: #F4A300; font-weight: bold; margin-left: 20px; font-size: 14px; }
+      .btn-logout { background: #F4A300; color: #1A2B4A; padding: 6px 14px; border-radius: 5px; font-weight: bold; margin-left: 15px; font-size: 13px; }
+      .container { max-width: 600px; margin: 60px auto; background: white; border-radius: 10px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      h1 { color: #1A2B4A; margin-bottom: 8px; font-size: 24px; }
+      p { color: #666; margin-bottom: 25px; font-size: 14px; }
+      .form-group { margin-bottom: 18px; }
+      label { display: block; color: #1A2B4A; font-size: 13px; font-weight: bold; margin-bottom: 6px; }
+      input, textarea, select { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+      input:focus, textarea:focus, select:focus { border-color: #2D5BE3; }
+      textarea { height: 100px; resize: vertical; }
+      .tags-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+      .tag-option { display: flex; align-items: center; gap: 6px; background: #EBF0FB; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+      .tag-option input { width: auto; margin: 0; }
+      .tag-option label { color: #2D5BE3; font-size: 13px; font-weight: bold; margin: 0; cursor: pointer; }
+      .btn { width: 100%; background: #2D5BE3; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+      .btn:hover { background: #1A2B4A; }
+      .back { display: inline-block; margin-bottom: 20px; color: #2D5BE3; text-decoration: none; font-size: 14px; }
+  body
+    nav
+      span.logo 📚 StudyBuddy
+      div
+        a(href="/users") Find Buddy
+        a(href="/listings") Listings
+        a(href="/tags") Subjects
+        a(href="/match") My Matches
+        if user
+          span.nav-user Hi, #{user.name.split(' ')[0]}!
+          a.btn-logout(href="/logout") Logout
+        else
+          a(href="/login") Login
+          a(href="/register") Register
+    .container
+      a.back(href="/listings") ← Back to Listings
+      h1 Create a Study Listing
+      p Share what you can offer or what you need help with
+      form(method="POST" action="/listings/create")
+        .form-group
+          label Listing Title
+          input(type="text" name="title" placeholder="e.g. Python Tutoring, Statistics Help Needed" required)
+        .form-group
+          label Type
+          select(name="listing_type" required)
+            option(value="offering") Offering Help
+            option(value="seeking") Seeking Help
+        .form-group
+          label Description
+          textarea(name="description" placeholder="Describe what you can offer or what you need help with..." required)
+        .form-group
+          label Subject Tags (select all that apply)
+          .tags-grid
+            each tag in tags
+              .tag-option
+                input(type="checkbox" name="tag_ids" value=tag.tag_id id="tag-" + tag.tag_id)
+                label(for="tag-" + tag.tag_id)= tag.tag_name
+        button.btn(type="submit") Post Listing

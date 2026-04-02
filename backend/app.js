@@ -134,6 +134,40 @@ app.get("/listings", (req, res) => {
   );
 });
 
+// CREATE LISTING - show form
+app.get("/listings/create", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  db.query("SELECT * FROM tags", (err, tags) => {
+    if (err) throw err;
+    res.render("create-listing", { title: "Create Listing", tags });
+  });
+});
+
+// CREATE LISTING - handle form
+app.post("/listings/create", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  const { title, description, listing_type, tag_ids } = req.body;
+  const userId = req.session.user.user_id;
+  db.query(
+    "INSERT INTO listings (user_id, title, description, listing_type, status) VALUES (?, ?, ?, ?, 'active')",
+    [userId, title, description, listing_type],
+    (err, result) => {
+      if (err) throw err;
+      const listingId = result.insertId;
+      if (tag_ids) {
+        const tags = Array.isArray(tag_ids) ? tag_ids : [tag_ids];
+        const tagValues = tags.map(tagId => [listingId, tagId]);
+        db.query("INSERT INTO listing_tags (listing_id, tag_id) VALUES ?", [tagValues], (err) => {
+          if (err) throw err;
+          res.redirect("/listings/" + listingId);
+        });
+      } else {
+        res.redirect("/listings/" + listingId);
+      }
+    }
+  );
+});
+
 app.get("/listings/:id", (req, res) => {
   const listingId = req.params.id;
   db.query(
@@ -156,6 +190,7 @@ app.get("/tags", (req, res) => {
     }
   );
 });
+
 
 
 
