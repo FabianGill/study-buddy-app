@@ -103,7 +103,7 @@ app.get("/logout", (req, res) => {
 app.get("/users", (req, res) => {
   db.query("SELECT * FROM users", (err, users) => {
     if (err) throw err;
-    res.render("users", { title: "Find a Study Buddy", users });
+    res.render("users", { title: "Find a Study Buddy", users, getLevel });
   });
 });
 
@@ -118,7 +118,7 @@ app.get("/users/:id", (req, res) => {
       [userId],
       (err, listings) => {
         if (err) throw err;
-        res.render("profile", { title: user.name, profileUser: user, listings });
+        res.render("profile", { title: user.name, profileUser: user, listings, getLevel });
       }
     );
   });
@@ -133,6 +133,22 @@ app.get("/listings", (req, res) => {
     }
   );
 });
+
+
+// POINTS HELPER FUNCTION
+function addPoints(userId, points) {
+  db.query("UPDATE users SET points = points + ? WHERE user_id = ?", [points, userId], (err) => {
+    if (err) console.error("Points update failed:", err);
+  });
+}
+
+function getLevel(points) {
+  if (points >= 200) return { level: "Champion", badge: "💎" };
+  if (points >= 101) return { level: "Expert", badge: "🏆" };
+  if (points >= 51)  return { level: "Helper", badge: "⭐" };
+  if (points >= 21)  return { level: "Learner", badge: "📚" };
+  return { level: "Newcomer", badge: "🌱" };
+}
 
 // CREATE LISTING - show form
 app.get("/listings/create", (req, res) => {
@@ -170,6 +186,14 @@ app.post("/listings/create", (req, res) => {
 
 app.get("/listings/:id", (req, res) => {
   const listingId = req.params.id;
+  // Increment view count
+  db.query("UPDATE listings SET views = views + 1 WHERE listing_id = ?", [listingId], () => {});
+  // Check if views reached 5 - give points to owner
+  db.query("SELECT user_id, views FROM listings WHERE listing_id = ?", [listingId], (err, rows) => {
+    if (!err && rows.length > 0 && rows[0].views === 5) {
+      addPoints(rows[0].user_id, 5);
+    }
+  });
   db.query(
     "SELECT l.*, u.name as user_name, u.avatar_initials, u.bio, u.year_of_study, GROUP_CONCAT(t.tag_name) as tags FROM listings l JOIN users u ON l.user_id = u.user_id LEFT JOIN listing_tags lt ON l.listing_id = lt.listing_id LEFT JOIN tags t ON lt.tag_id = t.tag_id WHERE l.listing_id = ? GROUP BY l.listing_id",
     [listingId],
@@ -229,6 +253,14 @@ app.post("/listings/:id/review", (req, res) => {
         [sessionId, reviewerId, rating, comment],
         (err) => {
           if (err) throw err;
+          // Give points to listing owner based on rating
+          db.query("SELECT user_id FROM listings WHERE listing_id = ?", [listingId], (err, rows) => {
+            if (!err && rows.length > 0) {
+              const ownerId = rows[0].user_id;
+              const pts = rating == 5 ? 20 : rating == 4 ? 10 : rating == 3 ? 5 : 0;
+              if (pts > 0) addPoints(ownerId, pts);
+            }
+          });
           res.redirect("/listings/" + listingId);
         }
       );

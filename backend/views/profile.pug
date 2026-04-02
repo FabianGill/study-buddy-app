@@ -47,7 +47,8 @@ html
       .avatar= profileUser.avatar_initials
       div
         h1= profileUser.name
-        p Year #{profileUser.year_of_study}
+        - var lvl = getLevel(profileUser.points)
+        p Year #{profileUser.year_of_study} · #{lvl.badge} #{lvl.level} · #{profileUser.points} points
     .content
       a.back(href="/users") ← Back to Users
       if user && user.user_id != profileUser.user_id

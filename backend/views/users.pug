@@ -14,12 +14,14 @@ html
       .header h1 { color: #1A2B4A; font-size: 32px; }
       .header p { color: #555; margin-top: 8px; }
       .grid { display: flex; flex-wrap: wrap; gap: 20px; padding: 40px; justify-content: center; }
-      .card { background: white; border-radius: 10px; padding: 25px; width: 260px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+      .card { background: white; border-radius: 10px; padding: 25px; width: 260px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; }
       .avatar { width: 60px; height: 60px; border-radius: 50%; background: #2D5BE3; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
       .card h3 { color: #1A2B4A; margin-bottom: 5px; }
       .card p { color: #666; font-size: 13px; margin-bottom: 15px; }
       .btn { background: #2D5BE3; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; font-size: 13px; }
       .year { color: #888; font-size: 12px; margin-bottom: 10px; }
+      .level-badge { position: absolute; top: 15px; right: 15px; background: #EBF0FB; color: #1A2B4A; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+      .points { color: #2D5BE3; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
   body
     nav
       span.logo 📚 StudyBuddy
@@ -27,6 +29,8 @@ html
         a(href="/users") Find Buddy
         a(href="/listings") Listings
         a(href="/tags") Subjects
+        a(href="/match") My Matches
+        a(href="/messages") Messages
         if user
           span.nav-user Hi, #{user.name.split(' ')[0]}!
           a.btn-logout(href="/logout") Logout
@@ -38,9 +42,12 @@ html
       p Connect with #{users.length} students on the platform
     .grid
       each u in users
+        - var lvl = getLevel(u.points)
         .card
+          span.level-badge #{lvl.badge} #{lvl.level}
           .avatar= u.avatar_initials
           h3= u.name
           p.year Year #{u.year_of_study}
+          p.points #{u.points} points
           p= u.bio
           a.btn(href="/users/" + u.user_id) View Profile
