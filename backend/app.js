@@ -158,6 +158,49 @@ app.get("/tags", (req, res) => {
 });
 
 
+
+// GET REVIEWS FOR A LISTING
+app.get("/listings/:id/reviews", (req, res) => {
+  const listingId = req.params.id;
+  db.query(
+    `SELECT r.*, u.name as reviewer_name, u.avatar_initials 
+     FROM reviews r 
+     JOIN users u ON r.reviewer_id = u.user_id
+     JOIN sessions s ON r.session_id = s.session_id
+     WHERE s.listing_id = ?
+     ORDER BY r.created_at DESC`,
+    [listingId],
+    (err, reviews) => {
+      if (err) throw err;
+      res.json(reviews);
+    }
+  );
+});
+
+// POST A REVIEW
+app.post("/listings/:id/review", (req, res) => {
+  if (!req.session.user) return res.redirect("/login");
+  const listingId = req.params.id;
+  const { rating, comment } = req.body;
+  const reviewerId = req.session.user.user_id;
+  db.query(
+    "INSERT INTO sessions (requester_id, listing_id, status) VALUES (?, ?, 'accepted')",
+    [reviewerId, listingId],
+    (err, result) => {
+      if (err) throw err;
+      const sessionId = result.insertId;
+      db.query(
+        "INSERT INTO reviews (session_id, reviewer_id, rating, comment) VALUES (?, ?, ?, ?)",
+        [sessionId, reviewerId, rating, comment],
+        (err) => {
+          if (err) throw err;
+          res.redirect("/listings/" + listingId);
+        }
+      );
+    }
+  );
+});
+
 // MATCHING ALGORITHM
 app.get("/match", (req, res) => {
   if (!req.session.user) return res.redirect("/login");
