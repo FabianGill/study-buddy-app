@@ -73,7 +73,7 @@ study-buddy-app/
 ## 👥 Team Members  
 - Fabian Gill (A00017906)  
 - Ramesh Bist (A00030110)  
-- Ahmed Hassan  
+- Ahmed Hassan (A00022015)
 - Shishir Gotame (A00029921)  
 
 ---
