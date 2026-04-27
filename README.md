@@ -6,7 +6,7 @@ Study Buddy is a peer-to-peer study support web application designed to connect 
 The platform enables students to:
 - Create user profiles  
 - Offer help in subjects they are confident in  
-- Request support in subjects they find challenging  
+- Request support in subjects they find challenging
 - Browse available study partners  
 
 This project aligns with the 2026 theme:  
